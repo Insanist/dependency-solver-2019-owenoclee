@@ -1,5 +1,6 @@
 import sys
 import json
+from package import Package
 
 parsed = []
 for i in range(1, 4):
@@ -10,6 +11,8 @@ repository = parsed[0]
 initial = parsed[1]
 constraints = parsed[2]
 
-print(repository)
-print(initial)
-print(constraints)
+packages = []
+for p in repository:
+    packages.append(Package.from_json(p))
+
+print(packages)
