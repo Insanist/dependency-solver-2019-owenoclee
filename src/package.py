@@ -5,8 +5,8 @@ class Package:
         self.name = name
         self.version = version
         self.size = size
-        self.conflicts = parse_constraints(conflicts)
-        self.depends = list(map(parse_constraints, depends))
+        self.conflicts = list(map(VersionConstraint.from_str, conflicts))
+        self.depends = list(map(lambda l: list(map(VersionConstraint.from_str, l)), depends))
 
     def __repr__(self):
         return f'''Package(
@@ -33,35 +33,33 @@ class Range(Enum):
     and_below = 3
     exactly = 4
 
-class Constraint:
+class VersionConstraint:
     def __init__(self, name, version, range):
         self.name = name
         self.version = version
         self.range = range
 
     def __repr__(self):
-        return f'Constraint({self.name}, {self.version} {self.range})'
+        return f'VersionConstraint({self.name}, {self.version} {self.range})'
 
-def parse_constraint(string):
-    if '<=' in string:
-        range = Range.and_below
-        [name, version] = string.split('<=')
-    elif '>=' in string:
-        range = Range.and_above
-        [name, version] = string.split('>=')
-    elif '<' in string:
-        range = Range.below
-        [name, version] = string.split('<')
-    elif '>' in string:
-        range = Range.above
-        [name, version] = string.split('>')
-    elif '=' in string:
-        range = Range.exactly
-        [name, version] = string.split('=')
-    else:
-        return Constraint(string, None, None)
+    @classmethod
+    def from_str(cls, string):
+        if '<=' in string:
+            range = Range.and_below
+            [name, version] = string.split('<=')
+        elif '>=' in string:
+            range = Range.and_above
+            [name, version] = string.split('>=')
+        elif '<' in string:
+            range = Range.below
+            [name, version] = string.split('<')
+        elif '>' in string:
+            range = Range.above
+            [name, version] = string.split('>')
+        elif '=' in string:
+            range = Range.exactly
+            [name, version] = string.split('=')
+        else:
+            return cls(string, None, None)
 
-    return Constraint(name, version, range)
-
-def parse_constraints(strings):
-    return list(map(parse_constraint, strings))
+        return cls(name, version, range)

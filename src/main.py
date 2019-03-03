@@ -11,8 +11,6 @@ repository = parsed[0]
 initial = parsed[1]
 constraints = parsed[2]
 
-packages = []
-for p in repository:
-    packages.append(Package.from_json(p))
+repository = list(map(Package.from_json, repository))
 
-print(packages)
+print(repository)
