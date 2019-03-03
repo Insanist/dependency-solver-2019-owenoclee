@@ -23,3 +23,10 @@ hs_err_pid*
 
 # Makefile-related
 deps
+
+# VSCode
+.vscode/
+
+# Python
+__pycache__/
+
