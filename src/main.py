@@ -12,7 +12,7 @@ repository = parsed[0]
 initial = parsed[1]
 constraints = parsed[2]
 
-repository = list(map(Package.from_json, repository))
+repository = {p.get_id():p for p in map(Package.from_json, repository)}
 constraints = list(map(Constraint.from_str, constraints))
 
 print(repository)

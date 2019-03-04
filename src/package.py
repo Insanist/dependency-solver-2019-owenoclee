@@ -17,6 +17,9 @@ class Package:
     depends: {self.depends}
 )'''
 
+    def get_id(self):
+        return f'{self.name}={self.version}'
+
     @classmethod
     def from_json(cls, json):
         return cls(
