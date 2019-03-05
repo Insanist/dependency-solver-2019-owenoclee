@@ -45,6 +45,22 @@ class VersionConstraint:
     def __repr__(self):
         return f'VersionConstraint({self.name}, {self.version} {self.range})'
 
+    def test(self, x):
+        if self.range == None:
+            return True
+        elif self.range == Range.above and x > self.version:
+            return True
+        elif self.range == Range.below and x < self.version:
+            return True
+        elif self.range == Range.and_above and x >= self.version:
+            return True
+        elif self.range == Range.and_below and x <= self.version:
+            return True
+        elif self.range == Range.exactly and x == self.version:
+            return True
+
+        return False
+
     @classmethod
     def from_str(cls, string):
         if '<=' in string:
