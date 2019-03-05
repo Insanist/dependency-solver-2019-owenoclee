@@ -2,6 +2,7 @@ import sys
 import json
 from package import Package
 from constraint import Constraint
+from z3 import *
 
 parsed = []
 for i in range(1, 4):
