@@ -19,6 +19,15 @@ constraints = list(map(Constraint.from_str, constraints))
 
 pkgs = {k:Bool(k) for k, _ in repository.items()}
 
+required_pkgs = []
+disallowed_pkgs = []
+for c in constraints:
+    p = helper.filter_by_constraint(pkgs, c)
+    if c.install:
+        required_pkgs.append(p)
+    else:
+        disallowed_pkgs.append(Not(p))
+
 with_deps = []
 for k, pkg in pkgs.items():
     dep_list_list = repository[k].depends
