@@ -29,6 +29,7 @@ for c in constraints:
         disallowed_pkgs.append(Not(p))
 
 with_deps = []
+with_conflicts = []
 for k, pkg in pkgs.items():
     dep_list_list = repository[k].depends
     all_of = []
@@ -52,4 +53,19 @@ for k, pkg in pkgs.items():
     elif len(all_of) == 1:
         with_deps.append(Implies(pkg, all_of[0]))
 
-print(with_deps)
+    con_list = repository[k].conflicts
+    all_of = []
+    for con in con_list:
+        if con.range == Range.exactly:
+            p = pkgs[f'{con.name}={con.version}']
+            all_of.append(Not(p))
+        else:
+            sub_pkgs = helper.filter_by_vconstraint(pkgs, con)
+            all_of.extend(map(lambda x: Not(x), sub_pkgs.values()))
+
+    if len(all_of) > 1:
+        with_conflicts.append(Implies(pkg, And(all_of)))
+    elif len(all_of) == 1:
+        with_conflicts.append(Implies(pkg, all_of[0]))
+
+solve(*with_deps, *with_conflicts, *required_pkgs, *disallowed_pkgs)
