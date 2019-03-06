@@ -68,4 +68,16 @@ for k, pkg in pkgs.items():
     elif len(all_of) == 1:
         with_conflicts.append(Implies(pkg, all_of[0]))
 
-solve(*with_deps, *with_conflicts, *required_pkgs, *disallowed_pkgs)
+solver = Solver()
+solver.add(*with_deps, *with_conflicts, *required_pkgs, *disallowed_pkgs)
+commands = []
+if solver.check() == sat:
+    model = solver.model()
+    for i in model:
+        if is_true(model[i]):
+            commands.append(f'+{i.name()}')
+
+print(json.dumps(commands))
+
+with open(sys.argv[1].replace('repository', 'commands'), 'a') as commands_file:
+    json.dump(commands, commands_file)
