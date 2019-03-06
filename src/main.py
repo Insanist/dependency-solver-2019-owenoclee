@@ -68,14 +68,46 @@ for k, pkg in pkgs.items():
     elif len(all_of) == 1:
         with_conflicts.append(Implies(pkg, all_of[0]))
 
+# get the final state
 solver = Solver()
 solver.add(*with_deps, *with_conflicts, *required_pkgs, *disallowed_pkgs)
-commands = []
+final_packages = []
 if solver.check() == sat:
     model = solver.model()
     for i in model:
         if is_true(model[i]):
-            commands.append(f'+{i.name()}')
+            final_packages.append(i.name())
+
+# figure out how to get to the final state!
+state = []
+commands = []
+has_progressed = True
+while len(final_packages) > 0 and has_progressed:
+    has_progressed = False
+    for p in final_packages:
+        cur_pkg = repository[k]
+
+        if len(cur_pkg.depends) == 0:
+            commands.append(f'+{p}')
+            state.append(p)
+            final_packages.remove(p)
+            has_progressed = True
+        else:
+            all_of_satisfied = True
+            for all_of in cur_pkg.depends:
+                any_of_satisfied = False
+                for any_of in all_of:
+                    if any_of in state:
+                        any_of_satisfied = True
+                        break
+                if not any_of_satisfied:
+                    all_of_satisfied = False
+                    break
+            if all_of_satisfied:
+                commands.append(f'+{p}')
+                state.append(p)
+                final_packages.remove(p)
+                has_progressed = True
 
 print(json.dumps(commands))
 
