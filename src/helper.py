@@ -1,3 +1,9 @@
+def filter_strs_by_vconstraint(pkgs, vconstraint):
+    start = f'{vconstraint.name}='
+    match_name = [p for p in pkgs if p.startswith(start)]
+    match_name_version = [p for p in match_name if vconstraint.test(p.split('=')[1])]
+    return match_name_version
+
 def filter_by_vconstraint(pkgs, vconstraint):
     start = f'{vconstraint.name}='
     match_name = {k:v for k, v in pkgs.items() if k.startswith(start)}

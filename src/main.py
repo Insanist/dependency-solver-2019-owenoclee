@@ -122,7 +122,7 @@ while len(final_packages) > 0 and has_progressed:
             for all_of in cur_pkg.depends:
                 any_of_satisfied = False
                 for any_of in all_of:
-                    if any_of in state:
+                    if len(helper.filter_strs_by_vconstraint(state, any_of)) > 0:
                         any_of_satisfied = True
                         break
                 if not any_of_satisfied:
