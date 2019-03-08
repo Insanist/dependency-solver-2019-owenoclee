@@ -110,7 +110,7 @@ has_progressed = True
 while len(final_packages) > 0 and has_progressed:
     has_progressed = False
     for p in final_packages:
-        cur_pkg = repository[k]
+        cur_pkg = repository[p]
 
         if len(cur_pkg.depends) == 0:
             commands.append(f'+{p}')
