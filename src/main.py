@@ -81,8 +81,31 @@ if solver.check() == sat:
             final_packages.append(i.name())
 
 # figure out how to get to the final state!
-state = []
+# super naive solution: uninstall everything in initial first
+state = initial
+uninstallations = []
+for p in state:
+    uninstallations.append({
+        'name': p,
+        'deps': [item for sublist in repository[p].depends for item in sublist]}) # flattens the list
+
 commands = []
+has_progressed = True
+while len(uninstallations) > 0 and has_progressed:
+    has_progressed = False
+    for p1 in uninstallations:
+        p1_is_depended_on = False
+        for p2 in uninstallations:
+            if p1 is p2: continue
+            if p1['name'] in p2['deps']:
+                p1_is_depended_on = True
+                break
+        if not p1_is_depended_on:
+            commands.append(f'-{p1["name"]}')
+            uninstallations.remove(p1)
+            state.remove(p1['name'])
+            has_progressed = True
+
 has_progressed = True
 while len(final_packages) > 0 and has_progressed:
     has_progressed = False
