@@ -37,8 +37,9 @@ for k, pkg in pkgs.items():
         any_of = []
         for dep in dep_list:
             if dep.range == Range.exactly:
-                p = pkgs[f'{dep.name}={dep.version}']
-                any_of.append(p)
+                p = pkgs.get(f'{dep.name}={dep.version}')
+                if p is not None:
+                    any_of.append(Not(p))
             else:
                 sub_pkgs = helper.filter_by_vconstraint(pkgs, dep)
                 any_of.extend(sub_pkgs.values())
@@ -57,8 +58,9 @@ for k, pkg in pkgs.items():
     all_of = []
     for con in con_list:
         if con.range == Range.exactly:
-            p = pkgs[f'{con.name}={con.version}']
-            all_of.append(Not(p))
+            p = pkgs.get(f'{con.name}={con.version}')
+            if p is not None:
+                all_of.append(Not(p))
         else:
             sub_pkgs = helper.filter_by_vconstraint(pkgs, con)
             all_of.extend(map(lambda x: Not(x), sub_pkgs.values()))
