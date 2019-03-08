@@ -135,6 +135,3 @@ while len(final_packages) > 0 and has_progressed:
                 has_progressed = True
 
 print(json.dumps(commands))
-
-with open(sys.argv[1].replace('repository', 'commands'), 'a') as commands_file:
-    json.dump(commands, commands_file)
