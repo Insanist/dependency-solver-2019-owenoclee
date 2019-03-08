@@ -30,3 +30,6 @@ deps
 # Python
 __pycache__/
 
+# tests
+tests/
+
