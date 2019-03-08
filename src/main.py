@@ -39,7 +39,7 @@ for k, pkg in pkgs.items():
             if dep.range == Range.exactly:
                 p = pkgs.get(f'{dep.name}={dep.version}')
                 if p is not None:
-                    any_of.append(Not(p))
+                    any_of.append(p)
             else:
                 sub_pkgs = helper.filter_by_vconstraint(pkgs, dep)
                 any_of.extend(sub_pkgs.values())
